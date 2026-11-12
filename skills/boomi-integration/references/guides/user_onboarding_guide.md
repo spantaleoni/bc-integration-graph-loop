@@ -18,6 +18,7 @@
    - **SERVER_BEARER_TOKEN** *(if AUTH_TYPE=bearer)*: "Bearer token sent as `Authorization: Bearer …` to the listener port."
    - **SERVER_VERIFY_SSL**: "Verify SSL for the shared web server? (false for self-signed, true for production — usually true)"
    - **BOOMI_DEFAULT_BRANCH_ID**: "If you use Branch & Merge, what's your default working branch ID? (Find via Branch Management in the Boomi GUI, or 'skip')"
+   - **BOOMI_MEMORY_VAULT** *(optional)*: "Where should your cross-session Boomi learnings vault live? (default `~/.boomi-memory` — one shared vault for all your Boomi projects; plain Markdown, browsable in Obsidian. Say 'skip' for the default)"
 
 2. **User creates .env file**:
    - Direct the user to copy `.env.example` to `.env` and paste their values in via a text editor or IDE

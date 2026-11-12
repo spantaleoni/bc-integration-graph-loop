@@ -10,7 +10,7 @@
 
 ### CLI Tools
 
-Specialized bash tools handle different aspects of the development lifecycle. All tools require `curl` and `jq`, and source credentials directly from `.env` — no Python dependencies or virtual environments needed. Run `boomi-env-check.sh` to see which required tools are installed.
+Specialized bash tools handle different aspects of the development lifecycle. All tools require `curl` and `jq`, and source credentials directly from `.env` — no Python dependencies or virtual environments needed. Run `boomi-env-check.sh` to see which required tools are installed. `boomi-memory.sh` is the exception — it is local-only and needs neither.
 
 **Environment & Setup**:
 - **boomi-env-check.sh**: Check which `.env` variables are set without revealing values, and which required CLI tools are installed
@@ -39,6 +39,9 @@ Specialized bash tools handle different aspects of the development lifecycle. Al
 
 **Profile Analysis**:
 - **boomi-profile-inspect.py**: Extract field metadata from large profiles — Python stdlib only, no pip deps
+
+**Graph Loop Memory**:
+- **boomi-memory.sh**: Save and recall cross-session learnings in a centralized, Obsidian-compatible markdown vault (default `~/.boomi-memory`, override with `BOOMI_MEMORY_VAULT`). Local-only — works outside a workspace and needs no credentials. Same-title saves append dated updates and merge tags/links; `--link` writes bidirectional backlinks; `stats` reports unlinked notes for consolidation. Full workflow and note taxonomy: `references/guides/graph_loop_memory.md`
 
 **Tool Selection Guide & Decision Tree**:
 

@@ -56,6 +56,17 @@ If the `boomi-marketplace` skill is available, it can search a portfolio of Boom
 ## Connection Discovery & Credential Security
 **Connection re-use is recommended.** Pulling existing connections keeps credentials out of the conversation. Offer the connection discovery workflow first, but respect the user's choice if they prefer to provide credentials directly. See `references/BOOMI_THINKING.md` § Connection Discovery for the full workflow.
 
+## Graph Loop Memory
+Cross-session learnings persist in a centralized, Obsidian-compatible markdown vault (default `~/.boomi-memory`; set `BOOMI_MEMORY_VAULT` in `.env` to relocate). Notes are plain markdown with `[[wikilinks]]` — the links form a knowledge graph, and the recall→apply→capture→consolidate loop compounds learnings across projects and sessions. One vault is shared by every workspace on the machine. Tool: `<skill-path>/scripts/boomi-memory.sh` (local-only — no credentials or `.env` needed).
+
+**Recall (session start + before design):** run `boomi-memory.sh recent --limit 5` at session start, and `boomi-memory.sh search "<topic>"` for the steps/connectors/systems the task involves. Treat hits as soft knowledge — verify against current references before relying on them.
+
+**Capture (after a learning moment):** debugging wins, user corrections, account/runtime quirks, reusable design patterns → `boomi-memory.sh save --type <learning|error-fix|pattern|preference|environment|project> --title "..." --tags "a,b" --body "..." --link "Related note"`. A same-title save appends a dated update and merges tags/links instead of duplicating. Err on the side of capturing; the tool never deletes.
+
+**Never memorize:** credentials, tokens, account/environment IDs, or any `.env` content.
+
+Full workflow, note taxonomy, and vault-sharing options (git, Syncthing): `references/guides/graph_loop_memory.md`.
+
 ## Workspace Organization & Knowledge Base
 ### Physical Directory Structure & Documentation Inventory
 **Core Mental Models:**
@@ -64,6 +75,7 @@ If the `boomi-marketplace` skill is available, it can search a portfolio of Boom
 - `references/guides/boomi_error_reference.md` - Error patterns, silent failures, and troubleshooting (read early in any troubleshooting effort)
 - `references/guides/boomi_platform_reference.md` - Platform services catalog (Data Hub, Flow, API Gateway, B2B/EDI) with scope boundaries (read when designing a new process, evaluating designs that expand beyond integration, or refactoring significantly)
 - `references/guides/problem_solving_guide.md` - Tiered escalation framework for handling unexpected situations, unknown components, and undocumented scenarios (read when encountering undocumented components or unexpected behavior)
+- `references/guides/graph_loop_memory.md` - Cross-session learnings vault: recall/capture workflow, note types, and vault sharing (read at session start for recall, and after debugging wins or user corrections to capture)
 
 **Step Type References:**
 Step documentation in `references/steps/` covers all in-scope step types with working examples.
@@ -112,7 +124,8 @@ Default to local `references/` — curated for this skill. Beyond it, don't answ
 │   │   ├── branch_merge_api_behavior.md # API-level branch semantics — last resort when CLI tools don't cover an edge case. Use branch_merge_guide.md if at all possible.
 │   │   ├── version_management_guide.md  # Read when: viewing component version history, comparing versions, or rolling back to a prior version
 │   │   ├── event_streams_rest_api.md    # REST produce API reference (auth, payloads, limits) — for direct REST integration with Event Streams topics
-│   │   └── edi_sap_patterns.md          # Read when: EDI ↔ SAP IDoc integration — IDoc segment hierarchy/cardinality, qualifier-driven routing (DTM/NAD → IDoc fields), composite decomposition, cross-reference table design, Z-segment handling
+│   │   ├── edi_sap_patterns.md          # Read when: EDI ↔ SAP IDoc integration — IDoc segment hierarchy/cardinality, qualifier-driven routing (DTM/NAD → IDoc fields), composite decomposition, cross-reference table design, Z-segment handling
+│   │   └── graph_loop_memory.md          # Graph loop memory — cross-session learnings in an Obsidian-compatible vault: recall/capture workflow, note types, backlinks, sharing via git/Syncthing (never store credentials)
 │   │
 │   ├── components/              # Component XML reference documentation
 │   │   ├── process_component.md              # Use when: creating/editing process XML - shape positioning, dragpoint connections, canvas structure, and process options (Process Mode/workload, allowSimultaneous, updateRunDates, enableUserLog, purgeDataImmediately, processLogOnErrorOnly, stopProcessingIfZeroDocuments)
@@ -218,6 +231,7 @@ Default to local `references/` — curated for this skill. Beyond it, don't answ
 └── scripts/                       # CLI tools — invoke as <skill-path>/scripts/<tool>.sh
     ├── boomi-common.sh          # Shared utilities sourced by all tools
     ├── boomi-env-check.sh       # Report which .env vars are set (without revealing values) and which tools are installed (pre-flight)
+    ├── boomi-memory.sh          # Graph loop memory — save/search/recall cross-session learnings in a centralized Obsidian-compatible markdown vault (local-only, no credentials)
     ├── boomi-folder-create.sh   # Create organized project folders on platform
     ├── boomi-folder-list.sh     # List a folder's child folders or whole subtree (id + fullPath)
     ├── boomi-folder-rename.sh   # Rename a folder in place (id, parent, contents unchanged)
@@ -324,6 +338,11 @@ Specialized tools handle the development lifecycle. All tools are bash scripts (
 - `boomi-env-check.sh` - Pre-flight diagnostic; reports which `.env` variables are set without revealing values, and which required CLI tools are installed
     - No arguments
 
+- `boomi-memory.sh` - Graph loop memory: save, search, and recall cross-session learnings in a centralized, Obsidian-compatible markdown vault (default `~/.boomi-memory`; relocate with `BOOMI_MEMORY_VAULT`). Local-only — works without credentials or a workspace `.env`
+    - Commands: `init`, `save --title T --type <learning|error-fix|pattern|preference|environment|project> --tags a,b --body B [--link "Note"]...`, `search [term] [--tag t] [--type t]`, `show <title>`, `recent [--limit N]`, `stats`
+    - A `save` whose title matches an existing note appends a dated update and merges tags/links instead of duplicating; `--link` creates bidirectional backlinks
+    - Never store credentials, tokens, or account/environment IDs in the vault. See § Graph Loop Memory and `references/guides/graph_loop_memory.md`
+
 - `boomi-folder-create.sh` - Create project folders on platform
     - Required: `folder_name` (positional)
     - Optional: `--parent-folder-id`, `--test-connection`
@@ -419,6 +438,7 @@ Re-use existing connections (see § Connection Discovery above). Component XML r
 Required for building and testing. Full setup in `references/guides/user_onboarding_guide.md`.
 - Platform API: `BOOMI_API_URL`, `BOOMI_USERNAME`, `BOOMI_API_TOKEN`, `BOOMI_ACCOUNT_ID`, `BOOMI_ENVIRONMENT_ID`, `BOOMI_TEST_ATOM_ID`, `BOOMI_VERIFY_SSL`, `BOOMI_TARGET_FOLDER`
 - Shared Web Server: `SERVER_BASE_URL`, `SERVER_AUTH_TYPE` (`basic | bearer | none`; unset = infer), `SERVER_USERNAME` + `SERVER_TOKEN` (Basic), `SERVER_BEARER_TOKEN` (Bearer), `SERVER_VERIFY_SSL` — used for WSS testing and **FSS connectivity** (see `references/guides/process_testing_guide.md`, `references/platform_entities/flow.md`). Boomi public cloud runtimes only support Basic; local runtimes can use other auth modes — see `references/platform_entities/shared_web_server.md` before assuming Basic is required.
+- Graph Loop Memory: `BOOMI_MEMORY_VAULT` (optional) — centralized cross-session memory vault path (default `~/.boomi-memory`). See § Graph Loop Memory.
 
 ## Development Patterns
 
@@ -464,7 +484,7 @@ Review references/guides/process_testing_guide.md for more info about methods an
 **Push vs Deploy:** Push = design-time update (GUI visible, not executable). Deploy = runtime update (executable, required for testing).
 
 **Handling Validation Errors:**
-Read error → Check `references/steps/` documentation → Compare with examples → Fix XML → Retry. Common issues: wrong shapetype, wrong configuration element, missing attributes (see `references/guides/boomi_error_reference.md` Issue #8).
+Read error → Check `references/steps/` documentation → Compare with examples → Fix XML → Retry. Common issues: wrong shapetype, wrong configuration element, missing attributes (see `references/guides/boomi_error_reference.md` Issue #8). After fixing, capture the cause→fix with `boomi-memory.sh save --type error-fix ...` so the next session recalls it (see § Graph Loop Memory).
 
 For situations beyond validation errors — unknown components, unexpected API behavior, undocumented features — see `references/guides/problem_solving_guide.md`.
 

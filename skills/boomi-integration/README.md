@@ -144,6 +144,10 @@ Agent: [Deploys process to runtime]
        [Runs a curl command to test, or provides you the details to test yourself]
 ```
 
+### Cross-Session Memory
+
+The skill remembers durable learnings — debugging fixes, account quirks, your preferences — in a centralized markdown vault: `~/.boomi-memory` by default, relocatable via `BOOMI_MEMORY_VAULT` in your `.env`. One vault is shared across all your Boomi projects. It is plain Markdown with `[[wikilinks]]`: open it in Obsidian (free) to browse the knowledge graph, and share it across machines with git or Syncthing. See `references/guides/graph_loop_memory.md` for the full workflow.
+
 ## Tools Overview
 
 The skill makes the following CLI tools available to the agent:
@@ -159,6 +163,7 @@ The skill makes the following CLI tools available to the agent:
 - `boomi-test-execute.sh` - Executes and tests processes via platform API
 - `boomi-wss-test.sh` - Tests WSS listener endpoints via the shared web server
 - `boomi-profile-inspect.py` - Extracts field metadata from large profiles (Python stdlib)
+- `boomi-memory.sh` - Saves and recalls cross-session learnings in a centralized, Obsidian-compatible markdown vault (default `~/.boomi-memory`)
 - `event-streams-setup.sh` - Configures Event Streams
 
 ## Documentation Structure

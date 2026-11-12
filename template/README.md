@@ -35,6 +35,10 @@ Ask Claude to help you find your credentials in the Boomi platform — it will w
   - `settings.local.json` - Permission presets
   - `commands/tidy-up` - Workspace cleanup command
 
+## Cross-Session Memory
+
+Workspaces created from this template share a **graph loop memory vault** — a folder of plain Markdown notes (default `~/.boomi-memory`, relocatable via `BOOMI_MEMORY_VAULT` in `.env`). Your AI agent saves durable learnings there (debugging fixes, account quirks, your preferences) and recalls them in later sessions and across projects. Notes are linked `[[wikilink]]`-style, so the vault opens as a knowledge graph in Obsidian (free) or open-source alternatives (Logseq, Foam). It is intentionally a plain folder: sync it across machines with git or Syncthing, and never put credentials in it. Ask for `/bc-integration:memory` anytime for a human-readable memory review.
+
 Note: The `/freshies` logic should replicate anything in your template folder so it is not restricted to just the original sample assets. If, for example, you chose to add a folder of reference material or hooks to your template those would be included in all of your workspaces (this can be very useful).
 
 **Common workflows:**

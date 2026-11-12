@@ -31,6 +31,12 @@ After completing a task that involves tool use, provide a quick summary of the w
 
 If curl returns exit code 35 (SSL handshake failure), alert the user to check corporate VPN or SSL-inspection tooling (e.g., Zscaler, Netskope, Cisco Umbrella) before troubleshooting.
 
+## Graph Loop Memory
+Learnings from this workspace persist in a centralized markdown vault shared across all your Boomi projects (default `~/.boomi-memory`, override via `BOOMI_MEMORY_VAULT` in `.env`). Use `<skill-base-path>/scripts/boomi-memory.sh`:
+- **Recall**: at session start run `recent --limit 5`, and `search "<topic>"` before designing anything non-trivial. Treat hits as soft knowledge — verify against current references before relying on them.
+- **Capture**: after a debugging win, a user correction, or a discovered account quirk, run `save --type <error-fix|learning|pattern|preference|environment|project> --title "..." --tags "..." --body "..."`. A same-title save appends a dated update, not a duplicate.
+- Never store credentials, tokens, or account IDs in the vault. See `references/guides/graph_loop_memory.md` in the skill for the full workflow.
+
 ## Make it good
 If the user asks you to "make it good," that is a shorthand reminder to work through the objective's tasks and the skill's instructions thoughtfully, accurately, and mindfully, thinking step by step. 
 

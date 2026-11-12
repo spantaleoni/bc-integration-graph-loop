@@ -34,6 +34,7 @@ claude --plugin-dir path-to-your-dev-copy-of-the-plugin/bc-integration
 
 - `/bc-integration:configure-template-workspace` - Sets up a template folder in the selected location and generates a global `/freshies` command.
 - `/bc-integration:env-setup-guide` - Interactive Boomi credentials setup
+- `/bc-integration:memory` - Review the cross-session graph loop memory vault (recent learnings, stats, unlinked notes)
 - `/bc-integration:tidy-up` - Clean development artifacts
 
 After running `configure-template-workspace`, users can invoke `/freshies` from any empty directory to scaffold a new Boomi project.

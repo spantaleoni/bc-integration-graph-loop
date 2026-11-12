@@ -46,6 +46,7 @@ Or browse and install via `/plugin` interactively.
 |---------|---------|
 | `/bc-integration:env-setup-guide` | Interactive Boomi credentials setup |
 | `/bc-integration:configure-template-workspace` | Create a reusable project template |
+| `/bc-integration:memory` | Review cross-session memory vault (learnings, stats) |
 | `/bc-integration:tidy-up` | Clean development artifacts |
 
 After running `configure-template-workspace`, use `/freshies` from any empty directory to scaffold a new project.
