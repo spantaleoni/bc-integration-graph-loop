@@ -27,6 +27,69 @@ The underlying skills are also available as standalone packages for use with oth
 
 See the [Boomi Companion marketplace](https://github.com/OfficialBoomi/boomi-companion) for the complete registry.
 
+## 🧠 Graph Loop Memory (New)
+
+**Cross-session learnings that compound over time.** The boomi-integration skill now includes a centralized memory layer — a plain Markdown vault (default `~/.boomi-memory`) where the agent saves durable learnings: debugging fixes, account/runtime quirks, your preferences, reusable patterns. One vault is shared across **all your Boomi projects** on the machine.
+
+### How it works
+
+| Phase | What happens |
+|-------|--------------|
+| **Recall** | At session start the agent runs `recent --limit 5` and `search "<topic>"` for the steps/connectors/systems you're working with. Hits are treated as soft knowledge — verified against current docs before use. |
+| **Apply** | Recalled learnings inform design choices (e.g., "this account's runtime is Advanced tier → use API Service Components"). |
+| **Capture** | After a debugging win, a user correction, or a discovered quirk, the agent saves a note: `save --type error-fix --title "..." --body "..." --link "Related note"`. Same-title saves append a dated update and merge tags/links instead of duplicating. |
+| **Consolidate** | `stats` surfaces unlinked (orphan) notes. You or the agent can link them into related notes or author hub notes in `hubs/` — making future recall one search away. |
+
+### Why this vault design?
+
+| Requirement | Solution |
+|-------------|----------|
+| **Freeware reader** | Obsidian (free for personal use) opens the folder as a vault and renders the `[[wikilinks]]` as a knowledge graph with backlinks. |
+| **Open-source alternatives** | Logseq, Foam (VS Code), SilverBullet — all read the same plain Markdown format. |
+| **Centralized across machines/teams** | The vault is just a folder. Sync it with **git** (private remote) or **Syncthing** (P2P, no server). Both are free and open source. |
+| **No vendor lock-in** | Plain text + `grep` works everywhere. No database, no server, no account. |
+| **Security** | The vault is **credential-free by design** — the tool never stores tokens, account IDs, or `.env` values. |
+
+### Tooling
+
+The CLI surface is `boomi-memory.sh` (in `skills/boomi-integration/scripts/`):
+
+```bash
+# Bootstrap (idempotent; also happens on first save)
+bash <skill-path>/scripts/boomi-memory.sh init
+
+# Save a learning (--body repeatable; --link repeatable; multiline via $'line1\nline2')
+bash <skill-path>/scripts/boomi-memory.sh save \
+  --type error-fix \
+  --title "Message step JSON quote escaping" \
+  --tags "message, json" \
+  --body $'Wrap substitutions like \x27"{1}"\x27, not "{1}".' \
+  --link "Silent failures checklist"
+
+# Search: full text (every word must match, order-free) + frontmatter filters
+bash <skill-path>/scripts/boomi-memory.sh search "silent failures"
+bash <skill-path>/scripts/boomi-memory.sh search --tag troubleshooting --type error-fix
+
+# Print one note (by title, path, or slug)
+bash <skill-path>/scripts/boomi-memory.sh show "Message step JSON quote escaping"
+
+# Session-start recall
+bash <skill-path>/scripts/boomi-memory.sh recent --limit 5
+
+# Vault stats + unlinked notes to consolidate
+bash <skill-path>/scripts/boomi-memory.sh stats
+```
+
+The vault location is configurable via `BOOMI_MEMORY_VAULT` in your workspace `.env` (defaults to `~/.boomi-memory`).
+
+### Human review
+
+Use the new `/bc-integration:memory` command for a readable summary:
+- Vault location, total notes, notes per type
+- Most recent learnings with one-line gists
+- Unlinked notes with consolidation suggestions
+- Instructions for browsing the graph in Obsidian or open-source alternatives
+
 ## Feedback & Issues
 
 Found a bug or have a feature idea? Email developer-offerings@boomi.com with a clear description, steps to reproduce, and any relevant error messages.
